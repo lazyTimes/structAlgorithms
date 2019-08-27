@@ -1,8 +1,5 @@
 package array;
 
-import javax.sql.rowset.serial.SerialArray;
-import java.util.Arrays;
-
 /**
  * 使用数组实现队列
  *
@@ -37,7 +34,7 @@ public class MyQueue {
             return;
         }
         // 注意此处为什么是-1 ：因为队列的头部不应该执行队伍的第一个元素，因为此时是出于队列的头部，并没有数据
-        rear = front = -1;
+        rear = front = 0;
         this.arr = new int[size];
         this.maxSize = size;
     }
@@ -53,10 +50,11 @@ public class MyQueue {
             System.err.println("队列为空，不能移除");
             return -1;
         }
-        for (int i = 1; i < rear; i++) {
-            arr[i - 1] = arr[i];
-        }
+//        for (int i = 1; i < rear; i++) {
+//            arr[i - 1] = arr[i];
+//        }
 //        arr[--rear] = 0;
+
         return arr[++front];
     }
 
@@ -69,11 +67,12 @@ public class MyQueue {
     public void addQueue(int val) {
         // 判断是否为空或者是否已经满了
         boolean empty = isFull();
-        if (!empty) {
+        if (empty) {
             System.err.println("队列已满，无法添加");
             return;
         }
-        arr[++rear] = val;
+        arr[rear] = val;
+        rear = (rear + 1) % maxSize;
     }
 
     /**
@@ -82,7 +81,9 @@ public class MyQueue {
      * @return
      */
     private boolean isFull() {
-        return rear != maxSize - 1;
+//        return rear != maxSize - 1;
+        // 这是最新的一种判定方式： rear =
+        return (rear  + 1) % maxSize == front;
     }
 
     private boolean isEmpty() {
@@ -90,20 +91,39 @@ public class MyQueue {
     }
 
     public void showQueue(){
-        System.err.println(Arrays.toString(this.arr));
+        if(arr == null || arr.length == 0){
+            System.err.println("队列为空，不能遍历");
+            return;
+        }
+
+        for (int i = front; i < front + size(); i++) {
+            System.err.print(arr[i % maxSize] + "\t");
+
+        }
+//        System.err.println(Arrays.toString(this.arr));
+    }
+
+
+    public int size(){
+        return (rear + maxSize - front) % maxSize;
     }
 
     public static void main(String[] args) {
-        MyQueue myQueue = new MyQueue(3);
+        MyQueue myQueue = new MyQueue(8);
         myQueue.addQueue(2);
-        myQueue.addQueue(5);
-        myQueue.addQueue(6);
+        myQueue.addQueue(55);
+        myQueue.addQueue(35);
+        myQueue.addQueue(25);
+        myQueue.addQueue(65);
+        myQueue.addQueue(85);
+        myQueue.addQueue(75);
+//        myQueue.addQueue(6);
         myQueue.removeQueue();
         myQueue.removeQueue();
         myQueue.removeQueue();
         // 这里出现问题，因为队头和队尾都指向队列的尾部，会出现无法添加和无法删除掉问题
-        myQueue.addQueue(6);
-        myQueue.removeQueue();
+//        myQueue.addQueue(6);
+//        myQueue.removeQueue();
 
         myQueue.showQueue();
     }
