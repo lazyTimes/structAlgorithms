@@ -1,6 +1,6 @@
 package queue;
 
-import java.util.LinkedList;
+import javax.annotation.Resource;
 import java.util.Stack;
 
 /**
@@ -23,11 +23,30 @@ public class SingelQueue {
         singelLinkedList.addByOrder(heroNode1);
         singelLinkedList.addByOrder(heroNode3);
         singelLinkedList.addByOrder(heroNode4);
-        singelLinkedList.delByIndex(4);
+//        singelLinkedList.delByIndex(4);
         singelLinkedList.reverse();
-        singelLinkedList.list();
-        System.err.println("count =  " + singelLinkedList.count());
-        System.err.println("倒数" + singelLinkedList.getLastIndexHeroNode(4));
+//        singelLinkedList.list();
+//        System.err.println("count =  " + singelLinkedList.count());
+//        System.err.println("倒数" + singelLinkedList.getLastIndexHeroNode(4));
+
+        // 合并两个有序列表
+        HeroNode heroNode9 = new HeroNode(19, "aaa", "aaa");
+        HeroNode heroNode5 = new HeroNode(5, "bbb", "bbb");
+        HeroNode heroNode6 = new HeroNode(23, "ccc", "ccc");
+        HeroNode heroNode7 = new HeroNode(66, "ddd", "ddd");
+        HeroNode heroNode8 = new HeroNode(3, "eee", "eee");
+        SingelLinkedList singelLinkedList2 = new SingelLinkedList();
+        SingelLinkedList singelLinkedList3 = new SingelLinkedList();
+        singelLinkedList2.add(heroNode9);
+        singelLinkedList2.add(heroNode8);
+        singelLinkedList2.add(heroNode6);
+        singelLinkedList3.add(heroNode5);
+        singelLinkedList3.add(heroNode7);
+        SingelLinkedList list = SingelLinkedList.mergeList(singelLinkedList2, singelLinkedList3);
+        list.list();
+        list.reversePrint();
+
+
     }
 }
 
@@ -49,20 +68,59 @@ class SingelLinkedList {
      * @param list2
      * @return
      */
-    public static HeroNode mergeList(HeroNode list1, HeroNode list2) {
-        HeroNode result = new HeroNode(0, "", "");
+    public static SingelLinkedList mergeList(SingelLinkedList list1, SingelLinkedList list2) {
+        if(list1 == null && list2 == null){
+            return null;
+        }
+        if(list1 == null) {
+            return list2;
+        }
+        if(list2 == null) {
+            return list1;
+        }
+        SingelLinkedList result = new SingelLinkedList();
+        HeroNode next1 = list1.getHead();
+        while (true) {
+            if (next1 == null) {
+                break;
+            }
+            HeroNode next = next1.getNext();
+            SingelLinkedList.addByOrder(result, next1);
+            next1 = next;
 
+        }
+        HeroNode next2 = list2.getHead().getNext();
+        while(true){
+            if(next2 == null) {
+                break;
+            }
+            HeroNode next = next2.getNext();
+            SingelLinkedList.addByOrder(result, next2);
+            next2 = next;
+
+        }
         return result;
     }
 
+    /**
+     * 反序打印链表里面的内容
+     * 使用的栈结构进行存放数据，然后使用栈进行输出操作
+     */
     public void reversePrint() {
+        System.err.println();
         if (head == null || head.getNext() == null || head.getNext().getNext() == null) {
             System.err.println("无需反转打印");
             return;
         }
-
+        HeroNode hero = head.getNext();
         Stack<HeroNode> stack = new Stack<>();
-
+        while (hero != null) {
+            stack.push(hero);
+            hero = hero.getNext();
+        }
+        while(stack.size()>0) {
+            System.out.println(stack.pop());
+        }
     }
 
     /**
@@ -138,31 +196,35 @@ class SingelLinkedList {
 
     }
 
-    public static void addByOrder(HeroNode head, HeroNode add) {
+    public static void addByOrder(SingelLinkedList singelLinkedList, HeroNode add) {
+        if (singelLinkedList == null) {
+            return;
+        }
+        HeroNode listHead = singelLinkedList.getHead();
 // 1. 由于头结点不能动，需要使用
-        HeroNode heroNode = head;
+//        HeroNode heroNode = mytest;
         boolean flag = false;
         while (true) {
-            if (heroNode.getNext() == null) {
+            if (listHead.getNext() == null) {
                 break;
             }
             // 寻找编号大于被插入节点的节点，因为只能找被插入的节点的上一个节点
-            if (heroNode.getNext().getNo() > add.getNo()) {
+            if (listHead.getNext().getNo() > add.getNo()) {
                 // 获取原来数据的下一个节点一个节点
                 break;
-            } else if (heroNode.getNext().getNo() == add.getNo()) {
+            } else if (listHead.getNext().getNo() == add.getNo()) {
                 //说明希望添加的heroNode的编号已然存在
                 flag = true;
                 break;
             }
-            heroNode = heroNode.getNext();
+            listHead = listHead.getNext();
         }
 
         if (flag) {
             System.err.println("被插入的节点已经存在");
         } else {
-            add.setNext(heroNode.getNext());
-            heroNode.setNext(add);
+            add.setNext(listHead.getNext());
+            listHead.setNext(add);
         }
 
     }
@@ -171,9 +233,10 @@ class SingelLinkedList {
      * 在插入的使用最新的方式：
      * 使用id编号进行排序，在查找的时候使用id进行排序查找
      *
-     * @param node
+     * @param hero
      */
-    public void addByOrder(HeroNode node) {
+    public void addByOrder(HeroNode hero) {
+        HeroNode temp = hero;
         // 1. 由于头结点不能动，需要使用
         HeroNode heroNode = head;
         boolean flag = false;
@@ -182,10 +245,10 @@ class SingelLinkedList {
                 break;
             }
             // 寻找编号大于被插入节点的节点，因为只能找被插入的节点的上一个节点
-            if (heroNode.getNext().getNo() > node.getNo()) {
+            if (heroNode.getNext().getNo() > temp.getNo()) {
                 // 获取原来数据的下一个节点一个节点
                 break;
-            } else if (heroNode.getNext().getNo() == node.getNo()) {
+            } else if (heroNode.getNext().getNo() == temp.getNo()) {
                 //说明希望添加的heroNode的编号已然存在
                 flag = true;
                 break;
@@ -196,8 +259,8 @@ class SingelLinkedList {
         if (flag) {
             System.err.println("被插入的节点已经存在");
         } else {
-            node.setNext(heroNode.getNext());
-            heroNode.setNext(node);
+            temp.setNext(heroNode.getNext());
+            heroNode.setNext(temp);
         }
 
 
@@ -327,6 +390,14 @@ class SingelLinkedList {
             heroNode = heroNode.getNext();
         }
 
+    }
+
+    public HeroNode getHead() {
+        return head;
+    }
+
+    public void setHead(HeroNode head) {
+        this.head = head;
     }
 }
 
