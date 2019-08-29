@@ -23,13 +23,11 @@ public class SingelQueue {
         singelLinkedList.addByOrder(heroNode1);
         singelLinkedList.addByOrder(heroNode3);
         singelLinkedList.addByOrder(heroNode4);
-//        singelLinkedList.delByIndex(4);
         singelLinkedList.reverse();
 //        singelLinkedList.list();
 //        System.err.println("count =  " + singelLinkedList.count());
 //        System.err.println("倒数" + singelLinkedList.getLastIndexHeroNode(4));
 
-        // 合并两个有序列表
         HeroNode heroNode9 = new HeroNode(19, "aaa", "aaa");
         HeroNode heroNode5 = new HeroNode(5, "bbb", "bbb");
         HeroNode heroNode6 = new HeroNode(23, "ccc", "ccc");
@@ -50,7 +48,9 @@ public class SingelQueue {
     }
 }
 
-
+/**
+ * 单项链表
+ */
 class SingelLinkedList {
     /**
      * 头节点，用来存储首节点的位置
@@ -379,6 +379,9 @@ class SingelLinkedList {
 
     }
 
+    /**
+     * 链表展示
+     */
     public void list() {
         HeroNode heroNode = head.getNext();
 
